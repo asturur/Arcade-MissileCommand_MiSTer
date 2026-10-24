@@ -594,7 +594,9 @@ reg  [2:0]	ay_cen_cnt = 3'b0;
 always @(posedge clk_10M) ay_cen_cnt <= ay_cen_cnt + 3'b1;
 wire		ay_cen = ay_cen_cnt == 3'b0;	// 1.25 MHz
 
-jt49 ay8912(
+// COMP(3) compresses the exponential DAC curve: the game only writes
+// volumes 1-6, inaudible through the plain curve
+jt49 #(.COMP(3'd3)) ay8912(
 	.rst_n(~reset),
 	.clk(clk_10M),
 	.clk_en(ay_cen),
@@ -620,7 +622,7 @@ jt49 ay8912(
 	.IOB_oe()
 );
 
-assign audio_o = bootleg ? s_ay_sound[9:4] :
+assign audio_o = bootleg ? (|s_ay_sound[9:8] ? 6'h3F : s_ay_sound[7:2]) :
 	({1'b0,pokey_ch0,1'b0}+{1'b0,pokey_ch1,1'b0})+({1'b0,pokey_ch2,1'b0}+{1'b0,pokey_ch3,1'b0});
 
 
