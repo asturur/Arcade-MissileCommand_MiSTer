@@ -595,7 +595,10 @@ jt49 ay8912(
 	.clk_en(ay_cen),
 	.addr(s_addr[3:0]),
 	.cs_n(s_POKEY_n | ~bootleg),
-	.wr_n(s_br_w_n),
+	// s_WRITE_n is the phase-gated write strobe (phi0 & hcnt[0] & write):
+	// address and data are stable while it is low. Using raw R/W here lets
+	// jt49 latch garbage during bus transitions (registers get scribbled).
+	.wr_n(s_WRITE_n),
 	.din(s_db_out),
 	.sel(1'b1),
 	.dout(s_ay_out),
