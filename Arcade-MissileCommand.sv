@@ -339,6 +339,7 @@ missile missile(
 	.p2_fire_r(m_fire_r),
 
 	.in2(in2),
+	.in3(sw[1]),
 	.switches(switches),
 
 	.self_test(m_test),

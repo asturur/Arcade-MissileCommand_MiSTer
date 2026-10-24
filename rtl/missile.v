@@ -49,6 +49,7 @@ module missile(
 	input				p2_fire_r,
 
 	input		 [7:0]	in2,
+	input		 [7:0]	in3,
 	input		 [7:0]	switches,
 
 	input				self_test,
@@ -212,7 +213,8 @@ wire in0_cs = s_addr[14:8] == 7'b1001000;
 wire in1_cs = s_addr[14:8] == 7'b1001001;
 // IN2 $4A00-$4AFF
 wire in2_cs = s_addr[14:8] == 7'b1001010;
-// Bootleg second DIP bank $4B00-$4BFF (pull-ups; all switches open = 0xFF = Italian text)
+// Bootleg second DIP bank $4B00-$4BFF
+// bits 0-1 starting cities (6/4/5/7), 2-3 language (EN/FR/DE/IT), 4-6 bonus city, 7 cursor speed
 wire in3_cs = s_addr[14:8] == 7'b1001011;
 
 assign s_db_in = ~s_PROGSEL_n[0] ? s_pgrom0_out :
@@ -223,7 +225,7 @@ assign s_db_in = ~s_PROGSEL_n[0] ? s_pgrom0_out :
 				~s_RAM_n ? vram_data_out :
 				in0_cs ? in0 :
 				in1_cs ? in1 :
-				(bootleg & in3_cs) ? 8'hFF :
+				(bootleg & in3_cs) ? in3 :
 				in2_cs ? in2 :
 				~s_COLRAM_n ? { 4'b0, s_cram_out} :
 				8'bXXXXXXXX;
