@@ -212,6 +212,8 @@ wire in0_cs = s_addr[14:8] == 7'b1001000;
 wire in1_cs = s_addr[14:8] == 7'b1001001;
 // IN2 $4A00-$4AFF
 wire in2_cs = s_addr[14:8] == 7'b1001010;
+// Bootleg second DIP bank $4B00-$4BFF (pull-ups; all switches open = 0xFF = Italian text)
+wire in3_cs = s_addr[14:8] == 7'b1001011;
 
 assign s_db_in = ~s_PROGSEL_n[0] ? s_pgrom0_out :
 				~s_PROGSEL_n[1] ? s_pgrom1_out :
@@ -221,6 +223,7 @@ assign s_db_in = ~s_PROGSEL_n[0] ? s_pgrom0_out :
 				~s_RAM_n ? vram_data_out :
 				in0_cs ? in0 :
 				in1_cs ? in1 :
+				(bootleg & in3_cs) ? 8'hFF :
 				in2_cs ? in2 :
 				~s_COLRAM_n ? { 4'b0, s_cram_out} :
 				8'bXXXXXXXX;
@@ -639,7 +642,7 @@ assign flip = s_FLIP;
 wire [7:0] in0_buttons = bootleg ? { coin, 2'b00, p1_start, p2_start, p2_fire_l, p2_fire_c, p2_fire_r }
 								 : { ~coin, 2'b11, ~p1_start, ~p2_start, ~p2_fire_l, ~p2_fire_c, ~p2_fire_r };
 wire [7:0] in0 = !s_CTRLD_n ? in0_buttons : {tb_count_v, tb_count_h};
-wire [7:0] in1 = bootleg ? { v_blank, self_test, slam, 1'b1, 1'b1, p1_fire_l, p1_fire_c, p1_fire_r }
+wire [7:0] in1 = bootleg ? { v_blank, self_test, slam, 1'b0, 1'b0, p1_fire_l, p1_fire_c, p1_fire_r }
 						 : { v_blank, ~self_test, ~slam, 1'b1, 1'b1, ~p1_fire_l, ~p1_fire_c, ~p1_fire_r };
 
 wire tb_dir_v, tb_clk_v, tb_dir_h, tb_clk_h;
