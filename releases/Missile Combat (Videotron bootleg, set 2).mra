@@ -1,0 +1,24 @@
+<misterromdescription>
+	<name>Missile Combat (Videotron bootleg, set 2)</name>
+	<mameversion>0263</mameversion>
+	<setname>mcombata</setname>
+	<year>1980</year>
+	<rotation>horizontal</rotation>
+	<manufacturer>bootleg (Videotron)</manufacturer>
+	<rbf>MissileCommand</rbf>
+	<switches default="08 00">
+		<dip bits="2,3" ids="Free Play,1 Coin 2 Credits,1 Coin 1 Credit,2 Coins 1 Credit" name="Coinage" values="0,1,2,3"></dip>
+	</switches>
+	<rom index="0" zip="mcombata.zip|missile.zip" md5="none">
+		<part crc="589b81de" name="002-0-0.10a"/>
+		<part crc="08796a78" name="002-1-1.9a"/>
+		<part crc="59ab750c" name="002-2-2.8a"/>
+		<part crc="ddbfda20" name="3.bin"/>
+		<part crc="e3b5428d" name="4.bin"/>
+		<part crc="1b9a16e2" name="002-5-5.5a"/>
+		<part crc="86a22140" name="mmi6331.6f"/>
+	</rom>
+	<rom index="1">
+		<part>01</part>
+	</rom>
+</misterromdescription>

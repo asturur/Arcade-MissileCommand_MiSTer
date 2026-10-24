@@ -308,6 +308,14 @@ begin
 	if (ioctl_wr && (ioctl_index==8'd254) && !ioctl_addr[24:3]) sw[ioctl_addr[2:0]] <= ioctl_dout;
 end
 
+// Core mod byte from MRA (rom index=1): bit 0 = Missile Combat bootleg hardware
+reg [7:0] core_mod = 8'd0;
+always @(posedge clk_sys)
+begin
+	if (ioctl_wr && (ioctl_index==8'd1)) core_mod <= ioctl_dout;
+end
+wire bootleg = core_mod[0];
+
 wire		dip_cocktail = 1'b1;		// 1= Upright, 0=Cocktail (enable flip)
 wire [1:0]	dip_language = sw[0][1:0];
 wire		dip_centrecoin = 1'b0;		// Coin multipliers are unnecessary
@@ -318,7 +326,9 @@ wire		dip_bonuscredit = 1'b1;		// Not useful
 wire [2:0]	dip_bonuscity = {sw[1][0], sw[0][7:6]};
 wire		dip_trackballspeed = sw[1][1];
 
-wire [7:0]	in2 = { 1'b0, dip_language, dip_centrecoin, dip_rightcoin, dip_coinage };
+// Bootleg DIP bank differs: bit 7 enables coins, multipliers/bonus coins off
+wire [7:0]	in2 = bootleg ? { 1'b1, 5'b00000, dip_coinage }
+						  : { 1'b0, dip_language, dip_centrecoin, dip_rightcoin, dip_coinage };
 wire [7:0]	switches = { dip_cocktail, dip_bonuscity, dip_trackballspeed, dip_bonuscredit, dip_cities };
 
 ///////////////////   CONTROLS   ////////////////////
@@ -459,7 +469,8 @@ missile missile(
 	.clk_10M(clk_sys),
 	.ce_5M(ce_5M),
 	.reset(reset),
-	
+	.bootleg(bootleg),
+
 	.audio_o(audio),
 
 	.htb_dir1(htb_dir1),
